@@ -16,41 +16,56 @@ class NewsInput(BaseModel):
     industry: str | None = None
 
 
+class ClusterResult(BaseModel):
+    company: str | None
+    location: str | None
+    industry: str | None
+    count: int
+    ids: list[str]
+
+
+class SentimentResult(BaseModel):
+    id: str
+    title: str
+    score: float
+    label: str
+
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
 
 
-@app.post("/cluster")
+@app.post("/cluster", response_model=list[ClusterResult])
 def cluster(news: list[NewsInput]):
     if not news:
         raise HTTPException(status_code=400, detail="News list cannot be empty")
     items = [NewsItem(**n.model_dump()) for n in news]
     clusters = cluster_news(items)
     return [
-        {
-            "company": c.company,
-            "location": c.location,
-            "industry": c.industry,
-            "count": len(c.items),
-            "ids": [i.id for i in c.items],
-        }
+        ClusterResult(
+            company=c.company,
+            location=c.location,
+            industry=c.industry,
+            count=len(c.items),
+            ids=[i.id for i in c.items],
+        )
         for c in clusters
     ]
 
 
-@app.post("/sentiment")
+@app.post("/sentiment", response_model=list[SentimentResult])
 def sentiment(news: list[NewsInput]):
     if not news:
         raise HTTPException(status_code=400, detail="News list cannot be empty")
     items = [n.model_dump() for n in news]
     ranked = rank_news(items)
     return [
-        {
-            "id": r.id,
-            "title": r.title,
-            "score": r.score,
-            "label": r.label,
-        }
+        SentimentResult(
+            id=r.id,
+            title=r.title,
+            score=r.score,
+            label=r.label,
+        )
         for r in ranked
     ]
