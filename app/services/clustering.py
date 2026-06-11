@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import List, Optional
 from collections import defaultdict
 
 
@@ -8,21 +7,21 @@ class NewsItem:
     id: str
     title: str
     text: str
-    company: Optional[str] = None
-    location: Optional[str] = None
-    industry: Optional[str] = None
+    company: str | None = None
+    location: str | None = None
+    industry: str | None = None
 
 
 @dataclass
 class NewsCluster:
     key: tuple
-    company: Optional[str]
-    location: Optional[str]
-    industry: Optional[str]
-    items: List[NewsItem]
+    company: str | None
+    location: str | None
+    industry: str | None
+    items: list[NewsItem]
 
 
-def cluster_news(news: List[NewsItem]) -> List[NewsCluster]:
+def cluster_news(news: list[NewsItem]) -> list[NewsCluster]:
     groups: dict[tuple, List[NewsItem]] = defaultdict(list)
 
     for item in news:

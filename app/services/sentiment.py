@@ -1,5 +1,4 @@
-from dataclasses import dataclass, field
-from typing import List
+from dataclasses import dataclass
 
 POSITIVE_WORDS = [
     "рост", "прибыль", "успех", "развитие", "инвестиции", "выручка",
@@ -47,7 +46,7 @@ def label_score(score: float) -> str:
     return "neutral"
 
 
-def rank_news(news: List[dict]) -> List[ScoredNews]:
+def rank_news(news: list[dict]) -> list[ScoredNews]:
     scored = []
     for item in news:
         combined = f"{item.get('title', '')} {item.get('text', '')}"
